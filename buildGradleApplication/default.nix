@@ -5,11 +5,13 @@
   writeShellScript,
   makeWrapper,
   mkM2Repository,
+  updateVerificationMetadata,
 }: {
   pname,
   version,
   src,
-  meta,
+  meta ? {},
+  env ? {},
   jdk ? pkgs.jdk,
   gradle ? pkgs.gradle,
   buildInputs ? [],
@@ -71,7 +73,19 @@
   '';
 
   package = stdenvNoCC.mkDerivation {
-    inherit pname version src meta buildInputs;
+    inherit pname version src buildInputs env;
+    meta =
+      {
+        # set default for meta.mainProgram here to gain compatibility with:
+        # `lib.getExe`, `nix run`, `nix bundle`, etc.
+        mainProgram = pname;
+      }
+      // meta;
+
+    passthru = {
+      inherit jdk gradle updateVerificationMetadata;
+    };
+
     nativeBuildInputs = [gradle jdk makeWrapper] ++ nativeBuildInputs;
     buildPhase = ''
       runHook preBuild
@@ -87,7 +101,7 @@
       export APP_VERSION=${version}
 
       # built the dam thing!
-      gradle --offline --no-daemon --no-watch-fs --no-configuration-cache --no-build-cache -Dorg.gradle.console=plain --no-scan -Porg.gradle.java.installations.auto-download=false --init-script ${./init.gradle.kts} ${buildTask}
+      gradle --offline --no-daemon --no-watch-fs -Dorg.gradle.unsafe.isolated-projects=false --no-configuration-cache --no-build-cache -Dorg.gradle.console=plain --no-scan -Porg.gradle.java.installations.auto-download=false --init-script ${./init.gradle.kts} ${buildTask}
 
       runHook postBuild
     '';

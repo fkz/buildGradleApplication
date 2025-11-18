@@ -2,7 +2,7 @@
   description = "A Nix builder function for packaging Gradle applications";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
   outputs = inputs @ {
@@ -39,10 +39,10 @@
           mkM2Repository = pkgs.callPackage ./buildGradleApplication/mkM2Repository.nix {
             inherit fetchArtifact;
           };
-          buildGradleApplication = pkgs.callPackage ./buildGradleApplication/default.nix {
-            inherit mkM2Repository;
-          };
           updateVerificationMetadata = pkgs.callPackage ./update-verification-metadata/default.nix {};
+          buildGradleApplication = pkgs.callPackage ./buildGradleApplication/default.nix {
+            inherit mkM2Repository updateVerificationMetadata;
+          };
           gradleFromWrapper = import ./gradleFromWrapper pkgs;
         in {
           inherit fetchArtifact mkM2Repository buildGradleApplication updateVerificationMetadata gradleFromWrapper;

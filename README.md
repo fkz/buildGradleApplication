@@ -217,9 +217,10 @@ application {
 
 Checkout the [`application` plugin documentation](https://docs.gradle.org/current/userguide/application_plugin.html) for any further details.
 
-### Rule #6: Tell gradle to be more reproducible
+### Rule #6: Tell gradle to be more reproducible (Gradle Versions 8 and lower)
 
-Gradle has [a few switches to make builds more reproducible](https://docs.gradle.org/current/userguide/working_with_files.html#sec:reproducible_archives). These must be set to ensure proper reproducibility of the genereated `.jar` files.
+Gradle has [a few switches to make builds more reproducible](https://docs.gradle.org/current/userguide/working_with_files.html#sec:reproducible_archives). These must be set in Gradle Versions < 9 to ensure proper reproducibility of the genereated `.jar` files.
+[Gradle 9 and onwards produces reproducible archives by default](https://gradle.org/whats-new/gradle-9/#reproducible-archives-by-default)
 
 ```kotlin
 // Important: This configuration is probably not complete for your project! 
@@ -269,9 +270,7 @@ In these cases, it's inconvenient to keep both versions (nix and wrapper) in syn
 To simplify this case, you can use the url and checksum from the `gradle-wrapper.properties` file to build exactly the same gradle package with the `gradleFromWrapper` builder function:
 
 ```nix
-gradle = pkgs.gradleFromWrapper {
-    wrapperPropertiesPath = ./gradle/wrapper/gradle-wrapper.properties;
-};
+gradle = pkgs.gradleFromWrapper ./gradle/wrapper/gradle-wrapper.properties;
 ```
 
 NOTE: This utility _only_ works with nixpkgs 24.11 and above, since it is based on changes made to `gradleGen` in [this PR](https://github.com/NixOS/nixpkgs/pull/277721).
