@@ -1,7 +1,7 @@
-{ stdenv, gradle }:
+{ gradle, runCommand }:
 { src }:
 
-stdenv.runCommand "repositories.nix" {
+runCommand "repositories.nix" {
     nativeBuildInputs = [ gradle ];
     inherit src;
 } ''

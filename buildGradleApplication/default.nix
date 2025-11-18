@@ -6,6 +6,7 @@
   makeWrapper,
   mkM2Repository,
   updateVerificationMetadata,
+  listRepositories,
 }: {
   pname,
   version,
@@ -29,7 +30,7 @@
     if isUnpublishedMetadataJar
     then builtins.trace "Ignoring potentially unpublished metadata jar: ${depSpec.name}" false
     else true,
-  repositories ? ["https://plugins.gradle.org/m2/" "https://repo1.maven.org/maven2/"],
+  repositories ? import (listRepositories { inherit src; }),
   verificationFile ? "gradle/verification-metadata.xml",
   buildTask ? ":installDist",
   installLocation ? "build/install/*/",
