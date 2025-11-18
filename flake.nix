@@ -20,6 +20,7 @@
             buildGradleApplication = prev.callPackage ./buildGradleApplication/default.nix {};
             updateVerificationMetadata = prev.callPackage ./update-verification-metadata/default.nix {};
             gradleFromWrapper = import ./gradleFromWrapper final;
+            listRepositories = prev.callPackage ./listRepositores {};
           };
         };
       };

@@ -3,12 +3,13 @@
   runCommand,
   python3,
   fetchArtifact,
+  listRepositories
 }: {
   pname,
   version,
   src,
   dependencyFilter ? depSpec: true,
-  repositories ? ["https://plugins.gradle.org/m2/" "https://repo1.maven.org/maven2/"],
+  repositories ? listRepositories { inherit src; },
   verificationFile ? "gradle/verification-metadata.xml",
 }: let
   filteredSrc = lib.fileset.toSource {

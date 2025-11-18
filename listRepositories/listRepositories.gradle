@@ -1,0 +1,30 @@
+gradle.settingsEvaluated { settings ->
+    rootProject {
+        tasks.register("listRepositories") {
+            doLast {
+                var alreadyEncounteredRepos = mutableSetOf<String>();
+                var first = true;
+
+                fun encounterRepo(repo: String) {
+                    if (!alreadyEncounteredRepos.has(repo)) {
+                        print(if (first) "[\n  \"" else ",\n  \"" + repo + "\"")
+                        first = false
+                        alreadyEncounteredRepos.add(repo)
+                    }
+                }
+
+
+                settings.pluginManagement.repositories.forEach { repo ->
+                    if(repo.url != null) encounterRepo(repo.url)
+                }
+                settings.dependencyResolutionManagement.repositories.forEach { repo ->
+                    if(repo.url != null) encounterRepo(repo.url)
+                }
+                if (first)
+                    println("throw \"Could not find any repositories\"")
+                else
+                    println("\n]")
+            }
+        }
+    }
+}
